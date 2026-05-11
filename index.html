@@ -1,99 +1,520 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>SmartBall - La pelota inteligente</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #0b1c2c;
-            color: white;
-        }
-        header {
-            background: linear-gradient(90deg, #0b1c2c, #123b5a);
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            margin: 0;
-            color: #4db8ff;
-        }
-        .container {
-            padding: 40px;
-            text-align: center;
-        }
-        .features {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 30px;
-        }
-        .feature {
-            width: 20%;
-            background: #123b5a;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .cta {
-            margin-top: 40px;
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 16px;
-            background-color: #4db8ff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        footer {
-            margin-top: 50px;
-            padding: 20px;
-            background-color: #091521;
-            text-align: center;
-        }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SmartBall</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:#07111f;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* HEADER */
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:25px 60px;
+    background:#0b1c2c;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+    color:#4db8ff;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:25px;
+    transition:0.3s;
+    font-size:16px;
+}
+
+nav a:hover{
+    color:#4db8ff;
+}
+
+/* HERO */
+
+.hero{
+    min-height:90vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:50px;
+    gap:80px;
+}
+
+.hero-text{
+    max-width:500px;
+}
+
+.hero-text h1{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+.hero-text span{
+    color:#4db8ff;
+}
+
+.hero-text p{
+    font-size:18px;
+    line-height:1.6;
+    color:#c7d5e0;
+}
+
+/* BOTONES */
+
+.buttons{
+    margin-top:30px;
+}
+
+.buttons a{
+    text-decoration:none;
+}
+
+.btn{
+    padding:14px 28px;
+    border:none;
+    border-radius:8px;
+    margin-right:15px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.btn-primary{
+    background:#4db8ff;
+    color:black;
+}
+
+.btn-primary:hover{
+    transform:scale(1.05);
+}
+
+.btn-secondary{
+    background:transparent;
+    border:1px solid #4db8ff;
+    color:white;
+}
+
+.btn-secondary:hover{
+    background:#4db8ff;
+    color:black;
+}
+
+/* PELOTA */
+
+.hero-image{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.ball{
+    width:260px;
+    height:260px;
+    border-radius:50%;
+
+    background:
+    radial-gradient(circle at 30% 30%, #ffffff, #d9d9d9);
+
+    position:relative;
+
+    animation:
+    spin 6s linear infinite,
+    float 3s ease-in-out infinite;
+
+    box-shadow:
+    0 0 40px rgba(77,184,255,0.4),
+    inset -15px -15px 30px rgba(0,0,0,0.3);
+}
+
+.ball::before{
+    content:'';
+
+    position:absolute;
+
+    width:90px;
+    height:90px;
+
+    background:black;
+
+    top:85px;
+    left:85px;
+
+    clip-path:polygon(
+        50% 0%,
+        100% 38%,
+        82% 100%,
+        18% 100%,
+        0% 38%
+    );
+}
+
+.ball::after{
+    content:'';
+
+    position:absolute;
+
+    width:100%;
+    height:100%;
+
+    border-radius:50%;
+
+    border:8px solid rgba(255,255,255,0.15);
+}
+
+@keyframes spin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+@keyframes float{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-15px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+
+}
+
+/* FEATURES */
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    padding:60px;
+}
+
+.feature{
+    background:#0b1c2c;
+    padding:30px;
+    border-radius:15px;
+    transition:0.3s;
+    border:1px solid transparent;
+}
+
+.feature:hover{
+    transform:translateY(-5px);
+    border:1px solid #4db8ff;
+}
+
+.feature h3{
+    color:#4db8ff;
+    margin-bottom:10px;
+}
+
+/* SHOP */
+
+.shop{
+    padding:80px 40px;
+}
+
+.shop-container{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:80px;
+
+    align-items:center;
+
+    max-width:1300px;
+
+    margin:auto;
+
+}
+
+.shop-info h2{
+    font-size:48px;
+    margin-bottom:20px;
+}
+
+.shop-info span{
+    color:#4db8ff;
+}
+
+.shop-info p{
+    color:#c7d5e0;
+    line-height:1.7;
+    font-size:18px;
+}
+
+.price-card{
+    margin-top:30px;
+    background:#0b1c2c;
+    border:1px solid #4db8ff;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 0 25px rgba(77,184,255,0.15);
+}
+
+.price-title{
+    color:#8ca3b5;
+    margin-bottom:10px;
+}
+
+.price-card h3{
+    font-size:52px;
+    color:#4db8ff;
+    margin-bottom:10px;
+}
+
+.shop-form{
+    background:#0b1c2c;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 0 25px rgba(0,0,0,0.3);
+}
+
+.shop-form form{
+    display:flex;
+    flex-direction:column;
+}
+
+.shop-form input{
+    margin-bottom:15px;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:#091521;
+    color:white;
+    font-size:16px;
+}
+
+.shop-form input:focus{
+    outline:1px solid #4db8ff;
+}
+
+/* FOOTER */
+
+footer{
+    background:#091521;
+    text-align:center;
+    padding:20px;
+    color:#8ca3b5;
+    margin-top:40px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+    .hero{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .shop-container{
+        grid-template-columns:1fr;
+    }
+
+    .shop-info h2{
+        font-size:36px;
+    }
+
+}
+
+</style>
+
 </head>
+
 <body>
 
 <header>
-    <h1>SMARTBALL</h1>
-    <p>Entrena. Mide. Mejora.</p>
+
+    <div class="logo">
+        SMARTBALL
+    </div>
+
+    <nav>
+        <a href="datos.php">Panel</a>
+        <a href="#comprar">Comprar</a>
+    </nav>
+
 </header>
 
-<div class="container">
-    <h2>La pelota que analiza tu juego</h2>
-    <p>Sensor inteligente integrado que mide cada uno de tus disparos en tiempo real.</p>
+<!-- HERO -->
 
-    <div class="features">
-        <div class="feature">
-            <h3>Velocidad</h3>
-            <p>Medición de velocidad máxima del disparo</p>
+<section class="hero">
+
+    <div class="hero-text">
+
+        <h1>
+            La pelota del <span>futuro</span>
+        </h1>
+
+        <p>
+            SmartBall incorpora sensores inteligentes capaces de medir
+            velocidad, fuerza, altura y distancia en tiempo real.
+        </p>
+
+        <div class="buttons">
+
+            <a href="datos.php">
+                <button class="btn btn-primary">
+                    Ver estadísticas
+                </button>
+            </a>
+
         </div>
-        <div class="feature">
-            <h3>Fuerza</h3>
-            <p>Registro de fuerza de impacto</p>
-        </div>
-        <div class="feature">
-            <h3>Altura</h3>
-            <p>Altura máxima alcanzada</p>
-        </div>
-        <div class="feature">
-            <h3>Distancia</h3>
-            <p>Distancia total recorrida</p>
-        </div>
+
     </div>
 
-    <div class="cta">
-        <form action="procesar.php" method="POST">
-            <input type="text" name="nombre" placeholder="Tu nombre" required><br><br>
-            <input type="email" name="email" placeholder="Tu email" required><br><br>
-            <button type="submit">Solicitar información</button>
-        </form>
+    <div class="hero-image">
+
+        <div class="ball"></div>
+
     </div>
-</div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="features">
+
+    <div class="feature">
+        <h3>⚡ Velocidad</h3>
+        <p>Detecta la velocidad máxima de cada disparo.</p>
+    </div>
+
+    <div class="feature">
+        <h3>💥 Fuerza</h3>
+        <p>Mide la intensidad y potencia del impacto.</p>
+    </div>
+
+    <div class="feature">
+        <h3>📏 Distancia</h3>
+        <p>Calcula la distancia total recorrida.</p>
+    </div>
+
+    <div class="feature">
+        <h3>📈 Altura</h3>
+        <p>Registra la altura máxima alcanzada.</p>
+    </div>
+
+</section>
+
+<!-- SHOP -->
+
+<section class="shop" id="comprar">
+
+    <div class="shop-container">
+
+        <div class="shop-info">
+
+            <h2>
+                Comprá tu <span>SmartBall</span>
+            </h2>
+
+            <p>
+                La nueva generación de pelotas inteligentes.
+                Sensores integrados y estadísticas en tiempo real.
+            </p>
+
+            <div class="price-card">
+
+                <p class="price-title">
+                    Precio oficial
+                </p>
+
+                <h3>
+                    $129.999
+                </h3>
+
+                <span>
+                    Incluye sensor inteligente y app.
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="shop-form">
+
+            <form action="comprar.php" method="POST">
+
+                <input
+                type="text"
+                name="nombre"
+                placeholder="Nombre completo"
+                required>
+
+                <input
+                type="email"
+                name="email"
+                placeholder="Correo electrónico"
+                required>
+
+                <input
+                type="text"
+                name="direccion"
+                placeholder="Dirección de envío"
+                required>
+
+                <input
+                type="text"
+                name="ciudad"
+                placeholder="Ciudad"
+                required>
+
+                <input
+                type="text"
+                name="cp"
+                placeholder="Código postal"
+                required>
+
+                <button class="btn btn-primary">
+                    Comprar ahora
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
 
 <footer>
-    <p>© 2026 SmartBall - Todos los derechos reservados</p>
+    © 2026 SmartBall
 </footer>
 
 </body>
