@@ -1,38 +1,33 @@
 <?php
 
-// CONEXIÓN A LA BASE DE DATOS
-$conn = new mysqli("localhost","root","","bd_pelotasensor");
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "bd_pelotasensor";
 
-// VERIFICAR CONEXIÓN
-if($conn->connect_error){
+$conn = new mysqli($host, $user, $pass, $db);
+
+if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-// VERIFICAR ENVÍO DEL FORMULARIO
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+$tipo = $_POST['tipo'] ?? '';
+$valor = $_POST['valor'] ?? '';
 
-    // OBTENER DATOS
-    $tipo = $_POST['tipo'];
-    $valor = $_POST['valor'];
+if ($tipo !== '' && $valor !== '') {
 
-    // INSERTAR EN LA BASE DE DATOS
-    $sql = "INSERT INTO registros (tipo, valor) VALUES ('$tipo', '$valor')";
+    $stmt = $conn->prepare(
+        "INSERT INTO registros (tipo, valor)
+         VALUES (?, ?)"
+    );
 
-    if($conn->query($sql) === TRUE){
-
-        // REDIRECCIONAR
-        header("Location: datos.php");
-        exit();
-
-    } else {
-
-        echo "Error al guardar datos";
-
-    }
-
+    $stmt->bind_param("si", $tipo, $valor);
+    $stmt->execute();
+    $stmt->close();
 }
 
-// CERRAR CONEXIÓN
 $conn->close();
 
+header("Location: datos.php");
+exit;
 ?>
