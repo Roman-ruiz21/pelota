@@ -1,43 +1,49 @@
 <?php
 
-$conn = new mysqli("localhost","root","","bd_pelotasensor");
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "bd_pelotasensor";
 
-if($conn->connect_error){
-    die("Error de conexión");
+$conn = new mysqli($host, $user, $pass, $db);
+
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
 }
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+$nombre    = $_POST['nombre'] ?? '';
+$email     = $_POST['email'] ?? '';
+$direccion = $_POST['direccion'] ?? '';
+$ciudad    = $_POST['ciudad'] ?? '';
+$cp        = $_POST['cp'] ?? '';
 
-    $nombre = $_POST['nombre'];
-    $email = $_POST['email'];
-    $direccion = $_POST['direccion'];
-    $ciudad = $_POST['ciudad'];
-    $cp = $_POST['cp'];
+if ($nombre !== '') {
 
-    // GUARDAR EN LA BD
-    $sql = "INSERT INTO registros
-(nombre,email,direccion,ciudad,cp,tipo,valor)
-VALUES
-(
-'$nombre',
-'$email',
-'$direccion',
-'$ciudad',
-'$cp',
-'Compra SmartBall',
-129999
-)";
+    $stmt = $conn->prepare(
+        "INSERT INTO registros
+        (nombre, email, direccion, ciudad, cp, tipo, valor)
+        VALUES (?, ?, ?, ?, ?, ?, ?)"
+    );
 
+    $tipo = "Compra SmartBall";
+    $valor = 129999;
 
-    $conn->query($sql);
+    $stmt->bind_param(
+        "ssssssi",
+        $nombre,
+        $email,
+        $direccion,
+        $ciudad,
+        $cp,
+        $tipo,
+        $valor
+    );
 
-} else {
-
-    header("Location:index.html");
-    exit();
-
+    $stmt->execute();
+    $stmt->close();
 }
 
+$conn->close();
 ?>
 
 <!DOCTYPE html>
