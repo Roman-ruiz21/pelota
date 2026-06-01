@@ -1,176 +1,244 @@
 <?php
 
-$conn = new mysqli("localhost","root","","bd_pelotasensor");
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "bd_pelotasensor";
+
+$conn = new mysqli($host, $user, $pass, $db);
+
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
+}
 
 // DATOS DEL GRÁFICO
 $tipos = [];
 $valores = [];
 
-$res = $conn->query("SELECT tipo, valor FROM registros WHERE valor IS NOT NULL");
+$res = $conn->query(
+    "SELECT tipo, valor
+     FROM registros
+     WHERE valor IS NOT NULL"
+);
 
-while($row = $res->fetch_assoc()){
-    $tipos[] = $row['tipo'];
-    $valores[] = $row['valor'];
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $tipos[] = $row['tipo'];
+        $valores[] = $row['valor'];
+    }
 }
 
 // ESTADÍSTICAS
-$maxQuery = $conn->query("SELECT MAX(valor) as maximo FROM registros");
-$avgQuery = $conn->query("SELECT AVG(valor) as promedio FROM registros");
-$countQuery = $conn->query("SELECT COUNT(valor) as total FROM registros");
+$max = ["maximo" => 0];
+$avg = ["promedio" => 0];
+$count = ["total" => 0];
 
-$max = $maxQuery->fetch_assoc();
-$avg = $avgQuery->fetch_assoc();
-$count = $countQuery->fetch_assoc();
+$maxQuery = $conn->query(
+    "SELECT MAX(valor) AS maximo FROM registros"
+);
+
+if ($maxQuery) {
+    $max = $maxQuery->fetch_assoc();
+}
+
+$avgQuery = $conn->query(
+    "SELECT AVG(valor) AS promedio FROM registros"
+);
+
+if ($avgQuery) {
+    $avg = $avgQuery->fetch_assoc();
+}
+
+$countQuery = $conn->query(
+    "SELECT COUNT(valor) AS total FROM registros"
+);
+
+if ($countQuery) {
+    $count = $countQuery->fetch_assoc();
+}
 
 ?>
 
 <!DOCTYPE html>
-
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Datos SmartBall</title>
 
-```
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SmartBall - Estadísticas</title>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
-    body{
-        margin:0;
-        font-family:Arial;
-        background:#0b1c2c;
-        color:white;
-    }
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#07111f;
+    color:white;
+}
 
-    header{
-        background:#123b5a;
-        padding:20px;
-        text-align:center;
-    }
+header{
+    background:#0b1c2c;
+    text-align:center;
+    padding:25px;
+    border-bottom:2px solid #4db8ff;
+}
 
-    .container{
-        padding:40px;
-        max-width:1000px;
-        margin:auto;
-    }
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:30px;
+}
 
-    .card{
-        background:#123b5a;
-        padding:25px;
-        border-radius:15px;
-        margin-bottom:30px;
-    }
+.card{
+    background:#0b1c2c;
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 0 20px rgba(77,184,255,0.1);
+}
 
-    input{
-        padding:10px;
-        margin:10px;
-        border:none;
-        border-radius:5px;
-    }
+h2{
+    color:#4db8ff;
+}
 
-    button{
-        padding:10px 20px;
-        background:#4db8ff;
-        border:none;
-        border-radius:5px;
-        cursor:pointer;
-    }
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+}
 
-    .stats{
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-        gap:15px;
-    }
+.stat{
+    background:#091521;
+    border:1px solid #4db8ff;
+    border-radius:10px;
+    padding:20px;
+    text-align:center;
+}
 
-    .stat{
-        background:#091521;
-        padding:20px;
-        border-radius:10px;
-        text-align:center;
-        border:1px solid #4db8ff;
-    }
+.stat h3{
+    color:#4db8ff;
+}
 
-    canvas{
-        background:white;
-        border-radius:10px;
-        padding:10px;
-    }
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    margin-bottom:15px;
+    border:none;
+    border-radius:8px;
+    background:#091521;
+    color:white;
+}
 
-    a{
-        color:#4db8ff;
-        text-decoration:none;
-    }
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    background:#4db8ff;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+canvas{
+    background:white;
+    border-radius:10px;
+    padding:10px;
+}
+
+.volver{
+    display:inline-block;
+    margin-top:20px;
+    color:#4db8ff;
+    text-decoration:none;
+}
 
 </style>
-```
 
 </head>
 
 <body>
 
 <header>
-    <h1>SMARTBALL</h1>
+
+    <h1>⚽ SMARTBALL</h1>
+
     <p>Panel de estadísticas</p>
+
 </header>
 
 <div class="container">
 
-```
-<!-- FORMULARIO -->
-<div class="card">
+    <div class="card">
 
-    <h2>Ingresar medición</h2>
+        <h2>Ingresar medición</h2>
 
-    <form action="guardar.php" method="POST">
+        <form action="guardar.php" method="POST">
 
-        <input type="text" name="tipo" placeholder="Tipo (Velocidad, Fuerza...)" required><br>
+            <input
+            type="text"
+            name="tipo"
+            placeholder="Velocidad, Fuerza, Altura..."
+            required>
 
-        <input type="number" name="valor" placeholder="Valor" required><br>
+            <input
+            type="number"
+            name="valor"
+            placeholder="Valor"
+            required>
 
-        <button type="submit">Guardar dato</button>
+            <button type="submit">
+                Guardar dato
+            </button>
 
-    </form>
+        </form>
 
-</div>
+    </div>
 
-<!-- ESTADÍSTICAS -->
-<div class="card">
+    <div class="card">
 
-    <h2>Estadísticas</h2>
+        <h2>Estadísticas generales</h2>
 
-    <div class="stats">
+        <div class="stats">
 
-        <div class="stat">
-            <h3>Máximo</h3>
-            <?php echo $max['maximo'] ?? 0; ?>
-        </div>
+            <div class="stat">
+                <h3>Máximo</h3>
+                <p><?php echo $max['maximo'] ?? 0; ?></p>
+            </div>
 
-        <div class="stat">
-            <h3>Promedio</h3>
-            <?php echo round($avg['promedio'],2) ?? 0; ?>
-        </div>
+            <div class="stat">
+                <h3>Promedio</h3>
+                <p><?php echo round($avg['promedio'] ?? 0, 2); ?></p>
+            </div>
 
-        <div class="stat">
-            <h3>Registros</h3>
-            <?php echo $count['total'] ?? 0; ?>
+            <div class="stat">
+                <h3>Registros</h3>
+                <p><?php echo $count['total'] ?? 0; ?></p>
+            </div>
+
         </div>
 
     </div>
 
-</div>
+    <div class="card">
 
-<!-- GRÁFICO -->
-<div class="card">
+        <h2>Gráfico de mediciones</h2>
 
-    <h2>Gráfico</h2>
+        <canvas id="grafico"></canvas>
 
-    <canvas id="grafico"></canvas>
+    </div>
 
-</div>
-
-<a href="index.html">⬅ Volver al inicio</a>
-```
+    <a class="volver" href="index.html">
+        ⬅ Volver al inicio
+    </a>
 
 </div>
 
@@ -179,9 +247,11 @@ $count = $countQuery->fetch_assoc();
 const ctx = document.getElementById('grafico');
 
 new Chart(ctx, {
+
     type: 'bar',
 
     data: {
+
         labels: <?php echo json_encode($tipos); ?>,
 
         datasets: [{
@@ -189,14 +259,19 @@ new Chart(ctx, {
             data: <?php echo json_encode($valores); ?>,
             borderWidth: 1
         }]
+
     },
 
     options: {
-        scales: {
-            y: {
+
+        responsive:true,
+
+        scales:{
+            y:{
                 beginAtZero:true
             }
         }
+
     }
 
 });
@@ -205,3 +280,7 @@ new Chart(ctx, {
 
 </body>
 </html>
+
+<?php
+$conn->close();
+?>
