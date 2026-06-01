@@ -1,35 +1,32 @@
 <?php
 
-// VERIFICAR FORMULARIO
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "bd_pelotasensor";
 
-    $nombre = $_POST['nombre'];
-    $email = $_POST['email'];
+$conn = new mysqli($host, $user, $pass, $db);
 
-    // CONEXIÓN
-    $conn = new mysqli("localhost", "root", "", "bd_pelotasensor");
-
-    // VERIFICAR CONEXIÓN
-    if($conn->connect_error){
-        die("Error de conexión: " . $conn->connect_error);
-    }
-
-    // INSERTAR DATOS
-    $sql = "INSERT INTO registros (nombre, email)
-            VALUES ('$nombre', '$email')";
-
-    $conn->query($sql);
-
-    // CERRAR
-    $conn->close();
-
-} else {
-
-    header("Location: index.html");
-    exit();
-
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
 }
 
+$nombre = $_POST['nombre'] ?? '';
+$email  = $_POST['email'] ?? '';
+
+if ($nombre !== '' && $email !== '') {
+
+    $stmt = $conn->prepare(
+        "INSERT INTO registros (nombre, email)
+         VALUES (?, ?)"
+    );
+
+    $stmt->bind_param("ss", $nombre, $email);
+    $stmt->execute();
+    $stmt->close();
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
