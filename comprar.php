@@ -1,12 +1,14 @@
 <?php
 
 $host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "bd_pelotasensor";
+$db   = "u894818569_sistemas";
+$user = "u894818569_murialdo";
+$pass = "Ilm988vb";
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $conn = new mysqli($host, $user, $pass, $db);
-
+$conn->set_charset("utf8mb4");
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
@@ -16,6 +18,8 @@ $email     = $_POST['email'] ?? '';
 $direccion = $_POST['direccion'] ?? '';
 $ciudad    = $_POST['ciudad'] ?? '';
 $cp        = $_POST['cp'] ?? '';
+$tipo  = "Compra SmartBall";
+$valor = 129999;
 
 if ($nombre !== '') {
 
@@ -29,7 +33,7 @@ if ($nombre !== '') {
     $valor = 129999;
 
     $stmt->bind_param(
-        "ssssssi",
+        "sssssss",
         $nombre,
         $email,
         $direccion,
@@ -42,6 +46,13 @@ if ($nombre !== '') {
     $stmt->execute();
     $stmt->close();
 }
+
+$resultado = $conn->query("
+SELECT *
+FROM registros
+ORDER BY id DESC
+LIMIT 10
+");
 
 $conn->close();
 ?>
@@ -319,10 +330,56 @@ QR ilustrativo para demostración.
         <a href="index.html">
             Volver al inicio
         </a>
+        
 
     </div>
 
 </div>
+<h2>Últimas compras</h2>
+
+<table border="1" cellpadding="8">
+
+<tr>
+
+<th>Nombre</th>
+
+<th>Email</th>
+
+<th>Ciudad</th>
+
+<th>Producto</th>
+
+<th>Precio</th>
+
+</tr>
+
+<?php
+
+while($fila = $resultado->fetch_assoc()){
+
+?>
+
+<tr>
+
+<td><?php echo $fila["nombre"]; ?></td>
+
+<td><?php echo $fila["email"]; ?></td>
+
+<td><?php echo $fila["ciudad"]; ?></td>
+
+<td><?php echo $fila["tipo"]; ?></td>
+
+<td>$<?php echo $fila["valor"]; ?></td>
+
+</tr>
+
+<?php
+
+}
+
+?>
+
+</table>
 
 </body>
 </html>
